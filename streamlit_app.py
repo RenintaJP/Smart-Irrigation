@@ -46,7 +46,7 @@ def get_blynk_data(pin):
         return "N/A"
 
 # --- 4. TAMPILAN DASHBOARD ---
-st.title("🌱 Monitoring Smart Irrigation")
+st.title("Monitoring Smart Irrigation")
 st.markdown("---")
 
 placeholder = st.empty()
@@ -57,7 +57,7 @@ while True:
         data = {label: get_blynk_data(pin) for label, pin in PINS.items()}
         
         # --- Baris Atas: Status Sistem ---
-        st.info(f"💡 **Status Sistem saat ini:** {data['Status']}")
+        st.info(f"**Status Tanah:** {data['Status']}")
 
         # --- Baris 1: Sensor Utama ---
         col1, col2, col3, col4 = st.columns(4)
@@ -74,11 +74,10 @@ while True:
         k_col.metric("Kalium (K)", data['K'])
         l_col.metric("Intensitas Cahaya", f"{data['Lux']} Lux")
 
-        # --- Footer: Jam WIB ---
-        # Menambahkan 7 jam (25200 detik) ke waktu server UTC
-        waktu_wib = time.localtime(time.time() + 7*3600)
-        st.markdown("---")
-        st.caption(f"Terakhir update (WIB): {time.strftime('%H:%M:%S', waktu_wib)} | Lokasi Server: Singapore (SGP1)")
+    # --- Footer ---
+        # Menambahkan 7 jam (25200 detik) agar menjadi WIB
+        waktu_wib = time.localtime(time.time() + 7*3600) 
+        st.caption(f"Terakhir update: {time.strftime('%H:%M:%S', waktu_wib)}")
 
     # Refresh setiap 3 detik agar lebih sinkron dengan Blynk
     time.sleep(3)
