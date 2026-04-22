@@ -14,7 +14,7 @@ except KeyError:
     st.stop()
 
 # --- 3. TAMPILAN DASHBOARD ---
-st.title("🌱 Monitoring Smart Irrigation")
+st.title("Monitoring Smart Irrigation")
 st.markdown("---")
 
 placeholder = st.empty()
