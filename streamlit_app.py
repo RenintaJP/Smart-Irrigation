@@ -48,7 +48,7 @@ while True:
         data = {label: get_blynk_data(pin) for label, pin in PINS.items()}
         
         # --- Baris Atas: Status Sistem ---
-        st.info(f"💡 **Status Perangkat:** {data['Status']}")
+        st.info(f"💡 **Status Tanah:** {data['Status']}")
 
         # --- Baris 1: Lingkungan Utama ---
         col1, col2, col3, col4 = st.columns(4)
