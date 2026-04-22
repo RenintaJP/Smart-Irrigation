@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import time
+import datetime
 
 # --- 1. KONFIGURASI HALAMAN ---
 st.set_page_config(page_title="Dashboard Irigasi Smart", layout="wide")
@@ -74,10 +75,14 @@ while True:
         k_col.metric("Kalium (K)", data['K'])
         l_col.metric("Intensitas Cahaya", f"{data['Lux']} Lux")
 
-        # --- Footer ---
-        # Menambahkan 7 jam (25200 detik) agar menjadi WIB
-        waktu_wib = time.localtime(time.time() + 7*3600) 
-        st.caption(f"Terakhir update: {time.strftime('%H:%M:%S', waktu_wib)}")
+        # --- Footer: Jam WIB ---
+        # Membuat zona waktu UTC+7 secara eksplisit
+        timezone_wib = datetime.timezone(datetime.timedelta(hours=7))
+        sekarang = datetime.datetime.now(timezone_wib)
+        waktu_sekarang = sekarang.strftime("%H:%M:%S")
 
-    # Refresh setiap 3 detik agar lebih sinkron dengan Blynk
-    time.sleep(3)
+        st.markdown("---")
+        st.caption(f"Terakhir update (WIB): {waktu_sekarang}")
+
+        # Refresh setiap 3 detik agar lebih sinkron dengan Blynk
+        time.sleep(3)
