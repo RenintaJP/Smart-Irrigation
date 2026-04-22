@@ -67,6 +67,8 @@ while True:
         l_col.metric("Cahaya", f"{data['Lux']} Lux")
 
         # --- Footer ---
-        st.caption(f"Terakhir update: {time.strftime('%H:%M:%S')}")
+        # Menambahkan 7 jam (25200 detik) agar menjadi WIB
+        waktu_wib = time.localtime(time.time() + 7*3600) 
+        st.caption(f"Terakhir update: {time.strftime('%H:%M:%S', waktu_wib)}")
         
     time.sleep(5) # Jeda 5 detik sebelum ambil data lagi
