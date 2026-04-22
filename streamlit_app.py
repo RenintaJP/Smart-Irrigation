@@ -31,13 +31,18 @@ st.title("Monitoring Smart Irrigation")
 def get_blynk_data(pin):
     url = f"https://sgp1.blynk.cloud/external/api/get?token={BLYNK_AUTH}&{pin}"
     try:
-        response = requests.get(url, timeout=2) # Tambah timeout agar tidak freeze
+        response = requests.get(url, timeout=2)
         if response.status_code == 200:
-            return response.text
-        return "0"
+            val = response.text
+            # Coba ubah ke angka, kalau gagal biarkan teks asli (untuk Status)
+            try:
+                return float(val) 
+            except:
+                return val
+        return 0
     except:
         return "N/A"
-
+    
 # --- 3. TAMPILAN DASHBOARD ---
 placeholder = st.empty()
 
@@ -71,4 +76,4 @@ while True:
         waktu_wib = time.localtime(time.time() + 7*3600) 
         st.caption(f"Terakhir update: {time.strftime('%H:%M:%S', waktu_wib)}")
         
-    time.sleep(5) # Jeda 5 detik sebelum ambil data lagi
+    time.sleep(2) # Jeda
