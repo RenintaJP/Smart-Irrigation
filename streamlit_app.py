@@ -74,7 +74,7 @@ while True:
         k_col.metric("Kalium (K)", data['K'])
         l_col.metric("Intensitas Cahaya", f"{data['Lux']} Lux")
 
-    # --- Footer ---
+        # --- Footer ---
         # Menambahkan 7 jam (25200 detik) agar menjadi WIB
         waktu_wib = time.localtime(time.time() + 7*3600) 
         st.caption(f"Terakhir update: {time.strftime('%H:%M:%S', waktu_wib)}")
