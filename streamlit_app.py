@@ -80,10 +80,10 @@ while True:
 
                 # --- AUTO-SAVE GOOGLE SHEETS ---
                 if gsheets_ready:
-                    if time.time() - st.session_state.last_save_time > 60:
+                    if time.time() - st.session_state.last_save_time > 10:
                         conn.create(data=pd.DataFrame([data]))
                         st.session_state.last_save_time = time.time()
-                        st.toast("Data tersimpan ke Sheets!", icon="💾")
+                        st.toast("Data tersimpan ke Sheets")
 
                 st.caption(f"Update: {data['Waktu']} WIB | Koneksi Stabil")
             
