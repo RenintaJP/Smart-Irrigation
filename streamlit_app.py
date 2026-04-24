@@ -14,21 +14,23 @@ st.set_page_config(
 # --- 2. AMBIL DATA PRIVAT DARI SECRETS ---
 try:
     BLYNK_AUTH = st.secrets["BLYNK_AUTH"]
-    gsheets_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
 except Exception as e:
-    st.error("Konfigurasi Secrets (Token Blynk/GSheets) belum diatur!")
+    st.error("Konfigurasi Secrets (Token Blynk) belum diatur!")
     st.stop()
 
 # --- 3. PENGATURAN KONEKSI ---
 try:
+    # Memastikan koneksi menggunakan Service Account dari secrets
     conn = st.connection("gsheets", type=GSheetsConnection)
     gsheets_ready = True
 except Exception as e:
+    st.sidebar.warning(f"GSheets Connection Error: {e}")
     gsheets_ready = False
 
 # --- 4. UI STATIC ---
 st.title("Smart Irrigation Monitoring")
-st.markdown(f"**Status Google Sheets:** {'✅ Terhubung' if gsheets_ready else '⚠️ Mode Monitoring (Belum Terhubung)'}")
+status_color = "" if gsheets_ready else ""
+st.markdown(f"**Status Google Sheets:** {status_color} {'Terhubung' if gsheets_ready else 'Mode Monitoring (Offline)'}")
 st.markdown("---")
 
 # Placeholder untuk update konten secara dinamis
@@ -51,9 +53,8 @@ def get_sensor_data():
             if res.status_code == 200:
                 raw_values.append(res.text)
             else:
-                raw_values.append("0") # Nilai default jika pin tidak merespon
+                raw_values.append("0") 
         
-        # Penanganan Waktu WIB
         tz_wib = datetime.timezone(datetime.timedelta(hours=7))
         now = datetime.datetime.now(tz_wib)
         
@@ -74,8 +75,8 @@ while True:
     
     if current_data:
         with placeholder.container():
-            # Tampilan Status Sistem
-            st.info(f"**Status Pompa/Sistem:** {current_data['Status']}")
+            # Tampilan Status Tanah
+            st.info(f"**Status Tanah:** {current_data['Status']}")
             
             # Baris 1: Sensor Tanah & Udara
             m1, m2, m3, m4 = st.columns(4)
@@ -94,25 +95,33 @@ while True:
             
             st.metric("pH Tanah", current_data['pH'])
 
-            # --- AUTO-SAVE ---
+            # --- LOGIKA JAM UPDATE (VISUAL) ---
+            timezone_wib = datetime.timezone(datetime.timedelta(hours=7))
+            jam_update = datetime.datetime.now(timezone_wib).strftime("%H:%M:%S")
+            
+            st.markdown("---")
+            st.caption(f"**Terakhir Update:** {jam_update} WIB | Mode: Turbo Batch Sync")
+
+            # --- AUTO-SAVE (LOGGING KE GOOGLE SHEETS) ---
             if gsheets_ready:
-                waktu_sekarang = time.time()
-                selisih = waktu_sekarang - st.session_state.last_save_time
-                
-                # Simpan setiap 60 detik
+                waktu_sekarang_detik = time.time()
+                selisih = waktu_sekarang_detik - st.session_state.last_save_time
+
+                # Interval simpan setiap 60 detik
                 if selisih >= 60:
                     try:
-                        # Baca data lama untuk digabungkan (Append mode)
+                        # Ambil data lama, gabung dengan data baru, lalu timpa ulang (Append simulation)
                         df_old = conn.read(worksheet="Sheet1", ttl=0)
                         df_new = pd.DataFrame([current_data])
                         df_final = pd.concat([df_old, df_new], ignore_index=True)
                         
-                        # Update spreadsheet
                         conn.update(worksheet="Sheet1", data=df_final)
                         
-                        st.session_state.last_save_time = waktu_sekarang
-                        st.toast("Data tersimpan di Google Sheets")
+                        # Reset timer
+                        st.session_state.last_save_time = waktu_sekarang_detik
+                        st.toast(f"Data Berhasil Masuk Sheets")
                     except Exception as e:
                         st.error(f"Gagal simpan data: {e}")
 
+    # Delay pengambilan data dari Blynk (2 detik)
     time.sleep(2)
