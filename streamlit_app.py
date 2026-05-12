@@ -107,8 +107,8 @@ while True:
                 waktu_sekarang_detik = time.time()
                 selisih = waktu_sekarang_detik - st.session_state.last_save_time
 
-                # Interval simpan setiap 60 detik
-                if selisih >= 60:
+                # Interval simpan setiap 5 menit
+                if selisih >= 300:
                     try:
                         # Ambil data lama, gabung dengan data baru, lalu timpa ulang (Append simulation)
                         df_old = conn.read(worksheet="Sheet1", ttl=0)
