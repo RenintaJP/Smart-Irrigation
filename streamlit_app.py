@@ -61,7 +61,7 @@ def get_sensor_data():
         return {
             "Tanggal": now.strftime("%Y-%m-%d"),
             "Waktu": now.strftime("%H:%M:%S"),
-            "Soil": raw_values[0], "T_Soil": raw_values[1], "T_Air": raw_values[2],
+            "M_Soil": raw_values[0], "T_Soil": raw_values[1], "T_Air": raw_values[2],
             "H_Air": raw_values[3], "Lux": raw_values[4], "pH": raw_values[5],
             "N": raw_values[6], "P": raw_values[7], "K": raw_values[8],
             "Status": raw_values[9]
@@ -80,7 +80,7 @@ while True:
             
             # Baris 1: Sensor Tanah & Udara
             m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Kelembapan Tanah", f"{current_data['Soil']} %")
+            m1.metric("Kelembapan Tanah", f"{current_data['M_Soil']} %")
             m2.metric("Suhu Tanah", f"{current_data['T_Soil']} °C")
             m3.metric("Suhu Udara", f"{current_data['T_Air']} °C")
             m4.metric("Kelembapan Udara", f"{current_data['H_Air']} %")
